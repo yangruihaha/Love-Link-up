@@ -8,7 +8,7 @@
             function randomSort(a, b)
             {
                 return Math.random()-0.5;
-            }
+            };
         
             $(document).ready(function(){
               $("#init").click(function(){
@@ -17,8 +17,9 @@
                     tdIndex.push(i);
                 }  
                 tdIndex.sort(randomSort);
-                for(i = 0; i < $("td").length; i = i++ ){
-                    $("td:eq("+i+")").html("<img src='"+(Math.round(Math.random()*9)+1)+".gif' />");
+                for(i = 0; i < $("td").length/2; i++ ){
+                    $("td:eq("+tdIndex[i*2]+")").html("<img src='"+(i%10+1)+".gif' />");
+                    $("td:eq("+tdIndex[i*2+1]+")").html("<img src='"+(i%10+1)+".gif' />");
                 }
               });
             });
