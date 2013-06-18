@@ -4,11 +4,22 @@
         <title>Love Link up For little.me </title>
         
         <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js'></script>
-        <script>
+        <script type='text/javascript'>
+            function randomSort(a, b)
+            {
+                return Math.random()-0.5;
+            }
+        
             $(document).ready(function(){
               $("#init").click(function(){
-                var name = "Xu";
-                $("td").html("<b>Hello "+name+"!</b>");
+                var tdIndex = new Array();  
+                for(i = 0; i < $("td").length; i++){
+                    tdIndex.push(i);
+                }  
+                tdIndex.sort(randomSort);
+                for(i = 0; i < $("td").length; i = i++ ){
+                    $("td:eq("+i+")").html("<img src='"+(Math.round(Math.random()*9)+1)+".gif' />");
+                }
               });
             });
         </script>
