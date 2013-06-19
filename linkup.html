@@ -10,18 +10,31 @@
                 return Math.random()-0.5;
             };
         
+            function linkPic(x, y, selected){
+                this.x = x;
+                this.y = y;
+                this.selected = selected;
+            };
+            
             $(document).ready(function(){
               $("#init").click(function(){
                 var tdIndex = new Array();  
                 for(i = 0; i < $("td").length; i++){
-                    tdIndex.push(i);
+                    var y_index = i%8;
+                    var x_index = (i-y_index)/8;
+                    var newPic = new linkPic(x_index,y_index,0);
+                    tdIndex.push(newPic);
                 }  
                 tdIndex.sort(randomSort);
                 for(i = 0; i < $("td").length/2; i++ ){
-                    $("td:eq("+tdIndex[i*2]+")").html("<img src='"+(i%10+1)+".gif' />");
-                    $("td:eq("+tdIndex[i*2+1]+")").html("<img src='"+(i%10+1)+".gif' />");
+                    $("td:eq("+(tdIndex[i*2].x*8+tdIndex[i*2].y)+")").html("<img src='"+(i%10+1)+".gif' />");
+                    $("td:eq("+(tdIndex[i*2+1].x*8+tdIndex[i*2+1].y)+")").html("<img src='"+(i%10+1)+".gif' />");
                 }
               });
+              
+              $('td').click(function(){
+                  $(this).fadeToggle('fast');
+              })
             });
         </script>
     </head>
