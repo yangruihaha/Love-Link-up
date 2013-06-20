@@ -9,31 +9,61 @@
             {
                 return Math.random()-0.5;
             };
+            
+            function reSort(a,b){
+                return a.x*8+a.y-b.x*8-b.y;
+            }
         
-            function linkPic(x, y, selected){
+            function linkPic(x, y, selected, pic){
                 this.x = x;
                 this.y = y;
                 this.selected = selected;
+                this.pic = pic;
             };
+            
+            var preClick = -1;
+            var curClick = -1;
+            var tdIndex = new Array(); 
             
             $(document).ready(function(){
               $("#init").click(function(){
-                var tdIndex = new Array();  
+                
                 for(i = 0; i < $("td").length; i++){
                     var y_index = i%8;
                     var x_index = (i-y_index)/8;
-                    var newPic = new linkPic(x_index,y_index,0);
+                    var newPic = new linkPic(x_index,y_index,0,0);
                     tdIndex.push(newPic);
                 }  
                 tdIndex.sort(randomSort);
+                
                 for(i = 0; i < $("td").length/2; i++ ){
                     $("td:eq("+(tdIndex[i*2].x*8+tdIndex[i*2].y)+")").html("<img src='"+(i%10+1)+".gif' />");
+                    tdIndex[i*2].pic = i%10+1;
                     $("td:eq("+(tdIndex[i*2+1].x*8+tdIndex[i*2+1].y)+")").html("<img src='"+(i%10+1)+".gif' />");
+                    tdIndex[i*2+1].pic = i%10+1;
                 }
+                tdIndex.sort(reSort);
               });
               
               $('td').click(function(){
-                  $(this).fadeToggle('fast');
+                  var selectIndex = $('td').index(this);
+                  preClick = curClick;
+                  curClick = selectIndex;
+                  
+                  if(preClick == -1){
+                      //alert(tdIndex[curClick].x*8+tdIndex[curClick].y);
+                      $(this).fadeTo(1000,0.4);
+                  }else{
+                      if(tdIndex[preClick].pic == tdIndex[curClick].pic){
+                          $(this).fadeTo(1000,0);
+                          $('td:eq('+preClick+')').fadeTo(1000,0);
+                      }
+                      else{
+                          $('td:eq('+preClick+')').fadeTo(1000,1);
+                      }
+                      preClick = -1;
+                      curClick = -1;
+                  }
               })
             });
         </script>
