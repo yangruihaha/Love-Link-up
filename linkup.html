@@ -5,6 +5,14 @@
         
         <script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js'></script>
         <script type='text/javascript'>
+            var preClick = -1;
+            var curClick = -1;
+            var tdIndex = new Array();
+            
+            var s0 = new Array();
+            var s1 = new Array();
+            var s2 = new Array();
+        
             function randomSort(a, b)
             {
                 return Math.random()-0.5;
@@ -14,16 +22,93 @@
                 return a.x*8+a.y-b.x*8-b.y;
             }
         
-            function linkPic(x, y, selected, pic){
+            function linkPic(x, y, preClick, pic){
                 this.x = x;
                 this.y = y;
-                this.selected = selected;
+                this.preClick = preClick;
                 this.pic = pic;
             };
             
-            var preClick = -1;
-            var curClick = -1;
-            var tdIndex = new Array(); 
+            function findPath(preClick, curClick, s){
+                for(x = tdIndex[preClick].x +1; x < 8; x++ ){
+                    if( x*8+tdIndex[preClick].y == curClick){
+                        tdIndex[x*8+tdIndex[preClick].y].preClick = preClick;
+                        s.push(tdIndex[x*8+tdIndex[preClick].y]);
+                        return true;
+                    }
+                    else if(tdIndex[x*8+tdIndex[preClick].y].pic == -1){
+                        tdIndex[x*8+tdIndex[preClick].y].preClick = preClick;
+                        s.push(tdIndex[x*8+tdIndex[preClick].y]);
+                    }
+                    else{
+                        break;
+                    }
+                }
+                for(x = tdIndex[preClick].x -1; x >= 0; x-- ){
+                    if( x*8+tdIndex[preClick].y == curClick){
+                        tdIndex[x*8+tdIndex[preClick].y].preClick = preClick;
+                        s.push(tdIndex[x*8+tdIndex[preClick].y]);
+                        return true;
+                    }
+                    else if(tdIndex[x*8+tdIndex[preClick].y].pic == -1){
+                        tdIndex[x*8+tdIndex[preClick].y].preClick = preClick;
+                        s.push(tdIndex[x*8+tdIndex[preClick].y]);
+                    }
+                    else{
+                        break;
+                    }
+                }
+                for(y = tdIndex[preClick].y +1; y < 8; y++ ){
+                    if( tdIndex[preClick].x*8+y == curClick){
+                        tdIndex[tdIndex[preClick].x*8+y].preClick = preClick;
+                        s.push(tdIndex[tdIndex[preClick].x*8+y]);
+                        return true;
+                    }
+                    else if(tdIndex[tdIndex[preClick].x*8+y].pic == -1){
+                        tdIndex[tdIndex[preClick].x*8+y].preClick = preClick;
+                        s.push(tdIndex[tdIndex[preClick].x*8+y]);
+                    }
+                    else{
+                        break;
+                    }
+                }
+                for(y = tdIndex[preClick].y -1; y >= 0; y-- ){
+                    if( tdIndex[preClick].x*8+y == curClick){
+                        tdIndex[tdIndex[preClick].x*8+y].preClick = preClick;
+                        s.push(tdIndex[tdIndex[preClick].x*8+y]);
+                        return true;
+                    }
+                    else if(tdIndex[tdIndex[preClick].x*8+y].pic == -1){
+                        tdIndex[tdIndex[preClick].x*8+y].preClick = preClick;
+                        s.push(tdIndex[tdIndex[preClick].x*8+y]);
+                    }
+                    else{
+                        break;
+                    }
+                }
+                return false;
+            };
+            
+            function path(preClick, curClick){
+                if(findPath(preClick, curClick, s0)){
+                    return true;
+                }
+                for(i= 0; i<s0.length; i++){
+                    //alert(s0[i].x*8 + s0[i].y);
+                    if(findPath(s0[i].x*8 + s0[i].y, curClick, s1))   {
+                        return true;
+                    }
+                }
+                for(i= 0; i<s1.length; i++){
+                    if(findPath(s1[i].x*8 + s1[i].y, curClick, s2))   {
+                        return true;
+                    }
+                }
+                s0 = new Array();
+                s1 = new Array();
+                s2 = new Array();
+                return false;
+            }
             
             $(document).ready(function(){
               $("#init").click(function(){
@@ -31,7 +116,7 @@
                 for(i = 0; i < $("td").length; i++){
                     var y_index = i%8;
                     var x_index = (i-y_index)/8;
-                    var newPic = new linkPic(x_index,y_index,0,0);
+                    var newPic = new linkPic(x_index,y_index,-1,-1);
                     tdIndex.push(newPic);
                 }  
                 tdIndex.sort(randomSort);
@@ -52,14 +137,16 @@
                   
                   if(preClick == -1){
                       //alert(tdIndex[curClick].x*8+tdIndex[curClick].y);
-                      $(this).fadeTo(1000,0.4);
+                      $(this).fadeTo('fast',0.4);
                   }else{
-                      if(tdIndex[preClick].pic == tdIndex[curClick].pic){
-                          $(this).fadeTo(1000,0);
-                          $('td:eq('+preClick+')').fadeTo(1000,0);
+                      if(tdIndex[preClick].pic == tdIndex[curClick].pic && path(preClick, curClick)){
+                          $(this).fadeTo('fast',0);
+                          $('td:eq('+preClick+')').fadeTo('fast',0);
+                          tdIndex[preClick].pic = -1;
+                          tdIndex[curClick].pic = -1;
                       }
                       else{
-                          $('td:eq('+preClick+')').fadeTo(1000,1);
+                          $('td:eq('+preClick+')').fadeTo('fast',1);
                       }
                       preClick = -1;
                       curClick = -1;
