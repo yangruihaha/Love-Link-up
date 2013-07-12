@@ -14,6 +14,8 @@ div{
     background-repeat:no-repeat;
     margin-top:10%;
     margin-left:auto;margin-right:auto;
+
+  	border-radius:25px;
 }
 
 table{
